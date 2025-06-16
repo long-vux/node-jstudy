@@ -24,6 +24,7 @@ Website hỗ trợ người dùng đăng nhập thông qua các tài khoản bê
    - Theo dõi tổng điểm của mình và xếp hạng.
    - Tham gia bình luận và thảo luận dưới mỗi bài tập.
    - Thực hiện các bài tập phù hợp với trình độ của mình (beginner, intermediate, advanced).
+   - Xem thống kê điểm số cho từng bài học đã làm.
 
 3. **Quản trị viên (ADMIN):**
    - Quản lý bài tập (Tạo, sửa, xóa bài tập).
@@ -58,6 +59,7 @@ Website hỗ trợ người dùng đăng nhập thông qua các tài khoản bê
   - Cập nhật điểm sau khi người dùng chạy bài và vượt qua các test case.
   - Thống kê điểm và xếp hạng người dùng.
   - Bình luận, thảo luận dưới mỗi bài tập.
+  - Xem thống kê điểm số chi tiết cho từng bài học.
 
 - **Thư viện và công cụ**:
   - **React**: Quản lý UI và trạng thái người dùng.
@@ -72,6 +74,7 @@ Website hỗ trợ người dùng đăng nhập thông qua các tài khoản bê
   - **Quản lý bài tập**: Tạo và cập nhật bài tập JavaScript cho người dùng.
   - **Xử lý điểm và xếp hạng**: Tính điểm dựa trên kết quả test case khi người dùng chạy bài.
   - **Quản lý bình luận**: Thêm, sửa, xóa các bình luận dưới bài tập.
+  - **Quản lý LessonScore**: Lưu trữ và trả về thống kê điểm số cho từng bài học của người dùng.
 
 - **Thư viện**:
   - **Express**: Tạo RESTful API cho backend.
@@ -87,26 +90,36 @@ Website hỗ trợ người dùng đăng nhập thông qua các tài khoản bê
 ```plaintext
 src/
 ├── controllers/
-│   ├── authController.ts        # Xử lý xác thực người dùng (Google, GitHub, Facebook)
-│   ├── exerciseController.ts    # Xử lý bài tập
-│   ├── userController.ts        # Quản lý người dùng
-│   ├── commentController.ts     # Quản lý bình luận
-│   └── rankingController.ts     # Xử lý xếp hạng
+│   ├── authController.ts         # Xử lý xác thực người dùng (Google, GitHub, Facebook)
+│   ├── exerciseController.ts     # Xử lý bài tập
+│   ├── userController.ts         # Quản lý người dùng
+│   ├── commentController.ts      # Quản lý bình luận
+│   ├── lessonScoreController.ts  # Quản lý điểm số cho từng bài học
+│   └── rankingController.ts      # Xử lý xếp hạng
 ├── models/
 │   ├── User.ts
 │   ├── Exercise.ts
 │   ├── Comment.ts
+│   ├── LessonScore.ts
 │   └── Ranking.ts
 ├── routes/
 │   ├── authRoutes.ts
 │   ├── exerciseRoutes.ts
 │   ├── userRoutes.ts
 │   ├── commentRoutes.ts
+│   ├── lessonScoreRoutes.ts
 │   └── rankingRoutes.ts
 ├── middleware/
 │   ├── authMiddleware.ts        # Kiểm tra JWT Token
 │   ├── validationMiddleware.ts  # Kiểm tra tính hợp lệ của dữ liệu gửi lên
 │   └── errorMiddleware.ts       # Xử lý lỗi toàn cục
+├── services/
+│   ├── authService.ts           # Xử lý đăng nhập với Google, Facebook, GitHub
+│   ├── exerciseService.ts       # Xử lý logic bài tập
+│   ├── userService.ts           # Xử lý người học
+│   ├── commentService.ts        # Xử lý bình luận
+│   ├── lessonScoreService.ts    # Xử lý điểm số cho từng bài học
+│   └── rankingService.ts        # Xử lý xếp hạng
 ├── config/
 │   ├── db.ts                    # Kết nối MongoDB
 │   └── oauthConfig.ts           # Cấu hình OAuth
