@@ -5,14 +5,26 @@ import { json, urlencoded } from 'body-parser';
 import { connectDB } from './src/config/db';  
 import routes from './src/routes'; 
 import dotenv from 'dotenv';
+import session from 'express-session';
+import passport from './src/config/passport';
 
-// Đảm bảo dotenv.config() được gọi trước khi sử dụng các biến môi trường
 dotenv.config();  
 
 const app = express();
 
-// Kết nối đến MongoDB
-connectDB();
+// Cấu hình session
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'default_session_secret',
+  resave: false,
+  saveUninitialized: true
+}));
+
+// Khởi tạo passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+connectDB(); // Kết nối đến MongoDB
 
 // Cấu hình middleware
 app.use(cors());
