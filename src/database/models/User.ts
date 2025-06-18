@@ -14,7 +14,7 @@ interface IUser extends Document {
     totalPoints: number;
     solvedExercises: number;
   };
-  joinedAt: Date;  // Lưu thời gian người dùng tham gia
+  joinedAt: Date; 
 }
 
 const userSchema = new Schema<IUser>({
@@ -32,7 +32,7 @@ const userSchema = new Schema<IUser>({
     solvedExercises: { type: Number, default: 0 }
   },
   joinedAt: { type: Date, default: Date.now }  
-});
+}, { timestamps: true });
 
 // Hàm tính toán thời gian tham gia và hiển thị theo định dạng "Tháng 7, 2021"
 userSchema.methods.getJoinDate = function () {
