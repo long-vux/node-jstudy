@@ -2,11 +2,11 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 // import morgan from 'morgan';
 import { json, urlencoded } from 'body-parser';
-import { connectDB } from './src/config/db';  
-import routes from './src/routes'; 
+import { connectDB } from './database/dbConnection';  
+import routes from './routes'; 
 import dotenv from 'dotenv';
 import session from 'express-session';
-import passport from './src/config/passport';
+import passport from './config/passport';
 
 dotenv.config();  
 
