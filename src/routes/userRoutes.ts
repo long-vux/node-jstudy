@@ -11,4 +11,6 @@ router.get('/:id', checkUser, catchAsync(UserController.getUserById));
 // Only admin can get all users
 router.get('/', checkUser, checkAdmin, catchAsync(UserController.getUsers));
 
+router.delete('/delete-me/:id', checkUser, catchAsync(UserController.userDeleteThemselves));
+
 export default router;

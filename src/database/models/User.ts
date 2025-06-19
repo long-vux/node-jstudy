@@ -10,12 +10,13 @@ interface IUser extends Document {
     avatar: string;
     bio: string;
   };
+  deletionRequestedAt: Date;
   stats: {
     totalPoints: number;
     solvedExercises: number;
   };
   status: 'active' | 'banned' | 'pending_deletion' | 'deleted';
-  joinedAt: Date; 
+  joinedAt: Date;
 }
 
 const userSchema = new Schema<IUser>({
@@ -28,24 +29,25 @@ const userSchema = new Schema<IUser>({
     avatar: String,
     bio: String
   },
-  status: { 
-    type: String, 
-    enum: ['active', 'banned', 'pending_deletion', 'deleted'], 
-    default: 'active' 
+  status: {
+    type: String,
+    enum: ['active', 'banned', 'pending_deletion', 'deleted'],
+    default: 'active'
   },
+  deletionRequestedAt: { type: Date }, // Thêm dòng này
   stats: {
     totalPoints: { type: Number, default: 0 },
     solvedExercises: { type: Number, default: 0 }
   },
-  joinedAt: { type: Date, default: Date.now }  
+  joinedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
 // Hàm tính toán thời gian tham gia và hiển thị theo định dạng "Tháng 7, 2021"
 userSchema.methods.getJoinDate = function () {
   const joinDate = this.joinedAt;
-  const month = joinDate.toLocaleString('default', { month: 'long' });  
-  const year = joinDate.getFullYear();  
-  
+  const month = joinDate.toLocaleString('default', { month: 'long' });
+  const year = joinDate.getFullYear();
+
   return `Bạn đã tham gia từ tháng ${month} năm ${year}`;
 };
 

@@ -22,15 +22,21 @@ const UserRepository = {
         return await newUser.save();
     },
 
-    // change status 
+    // change status of user to deleted -> change status to pending_deletion
     userDeleteThemselves: async (id: string) => {
-        return await User.findByIdAndDelete(id);
-    }
+        return await User.findByIdAndUpdate(
+            id,
+            {
+                status: 'pending_deletion',
+                deletionRequestedAt: new Date()
+            }
+        );
+    },
 
+    // delete permanently
     deleteUser: async (id: string) => {
         return await User.findByIdAndDelete(id);
     }
-
 }
 
 export default UserRepository;
