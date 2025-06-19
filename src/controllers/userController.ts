@@ -39,6 +39,16 @@ const UserController = {
         await UserRepository.userDeleteThemselves(userId);
         return res.status(200).json({ message: 'Account will be deleted after 30 days.' });
     },
+
+    banUser: async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const user = await UserRepository.findUserById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+        await UserRepository.updateUser(id, { status: 'banned' });
+        return res.status(200).json({ message: 'User banned successfully.' });
+    }
 };
 
 export default UserController;
