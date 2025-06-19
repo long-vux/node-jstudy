@@ -1,12 +1,42 @@
 import User from '../models/User';
 
-export const createUser = async (userData: any) => {
-    const newUser = new User(userData);
-    return await newUser.save();
-};
-export const findUserByEmail = async (email: string) => {
-    return await User.findOne({ email });
-};
-export const findUserById = async (id: string) => {
-    return await User.findById(id);
-};
+const UserRepository = {
+    findUserByEmail: async (email: string) => {
+        return await User.findOne({ email });
+    },
+
+    findUserById: async (id: string) => {
+        return await User.findById(id);
+    },
+
+    findAllUsers: async () => {
+        return await User.find();
+    },
+
+    updateUser: async (id: string, updateData: any) => {
+        return await User.findByIdAndUpdate(id, updateData, { new: true });
+    },
+
+    createUser: async (userData: any) => {
+        const newUser = new User(userData);
+        return await newUser.save();
+    },
+
+    // change status of user to deleted -> change status to pending_deletion
+    userDeleteThemselves: async (id: string) => {
+        return await User.findByIdAndUpdate(
+            id,
+            {
+                status: 'pending_deletion',
+                deletionRequestedAt: new Date()
+            }
+        );
+    },
+
+    // delete permanently
+    deleteUser: async (id: string) => {
+        return await User.findByIdAndDelete(id);
+    }
+}
+
+export default UserRepository;

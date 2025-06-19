@@ -8,6 +8,9 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 // import passport from './config/passport';
 
+// helper to delete pending user after 30 days
+import './helpers/deletePendingUser'; 
+
 dotenv.config();  
 
 const app = express();
