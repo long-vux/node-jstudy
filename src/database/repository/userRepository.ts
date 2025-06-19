@@ -20,7 +20,17 @@ const UserRepository = {
     createUser: async (userData: any) => {
         const newUser = new User(userData);
         return await newUser.save();
+    },
+
+    // change status 
+    userDeleteThemselves: async (id: string) => {
+        return await User.findByIdAndDelete(id);
     }
+
+    deleteUser: async (id: string) => {
+        return await User.findByIdAndDelete(id);
+    }
+
 }
 
 export default UserRepository;

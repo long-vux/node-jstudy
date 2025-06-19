@@ -30,6 +30,16 @@ const UserController = {
 
         const result = await UserRepository.updateUser(id, updateData);
         return res.status(200).json({ message: "Update user successfully", result });
+    },
+
+    deleteUser: async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const user = await UserRepository.findUserById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+        await UserRepository.deleteUser(id);
+        return res.status(200).json({ message: 'User deleted successfully.' });
     }
 
 };

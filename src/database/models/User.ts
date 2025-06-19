@@ -14,7 +14,7 @@ interface IUser extends Document {
     totalPoints: number;
     solvedExercises: number;
   };
-  banned: { type: Boolean, default: false },
+  status: 'active' | 'banned' | 'pending_deletion' | 'deleted';
   joinedAt: Date; 
 }
 
@@ -27,6 +27,11 @@ const userSchema = new Schema<IUser>({
     fullName: String,
     avatar: String,
     bio: String
+  },
+  status: { 
+    type: String, 
+    enum: ['active', 'banned', 'pending_deletion', 'deleted'], 
+    default: 'active' 
   },
   stats: {
     totalPoints: { type: Number, default: 0 },
