@@ -14,6 +14,7 @@ interface IUser extends Document {
     totalPoints: number;
     solvedExercises: number;
   };
+  banned: { type: Boolean, default: false },
   joinedAt: Date; 
 }
 

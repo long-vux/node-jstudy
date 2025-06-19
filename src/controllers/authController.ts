@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import catchAsync from '../utils/catchAsync';
-import { createUser, findUserByEmail } from '../database/repository/userRepository';
+import UserRepository from '../database/repository/userRepository';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -10,7 +9,7 @@ export const register = async (req: Request, res: Response) => {
     const { username, email, password, fullName } = req.body;
 
     // Check if user already exists
-    const existingUser = await findUserByEmail(email);
+    const existingUser = await UserRepository.findUserByEmail(email);
     if (existingUser) {
         return res.status(400).json({ message: 'Email already in use.' });
     }
@@ -19,13 +18,14 @@ export const register = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user
-    const newUser = await createUser({
+    const newUser = await UserRepository.createUser({
         username,
         email,
         password: hashedPassword,
         role: 'user',
         profile: { fullName, avatar: '', bio: '' },
         stats: { totalPoints: 0, solvedExercises: 0 },
+        banned: false,
         joinedAt: new Date(),
     });
 
@@ -36,7 +36,7 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     // Find user by email
-    const user = await findUserByEmail(email);
+    const user = await UserRepository.findUserByEmail(email);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: 'Invalid email or password.' });

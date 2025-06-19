@@ -1,12 +1,22 @@
 import User from '../models/User';
 
-export const createUser = async (userData: any) => {
-    const newUser = new User(userData);
-    return await newUser.save();
-};
-export const findUserByEmail = async (email: string) => {
-    return await User.findOne({ email });
-};
-export const findUserById = async (id: string) => {
-    return await User.findById(id);
-};
+const UserRepository = {
+    findUserByEmail: async (email: string) => {
+        return await User.findOne({ email });
+    },
+
+    findUserById: async (id: string) => {
+        return await User.findById(id);
+    },
+
+    updateUser: async (id: string, updateData: any) => {
+        return await User.findByIdAndUpdate(id, updateData, { new: true });
+    },
+
+    createUser: async (userData: any) => {
+        const newUser = new User(userData);
+        return await newUser.save();
+    }
+}
+
+export default UserRepository;
