@@ -9,6 +9,10 @@ const UserRepository = {
         return await User.findById(id);
     },
 
+    findAllUsers: async () => {
+        return await User.find();
+    },
+
     updateUser: async (id: string, updateData: any) => {
         return await User.findByIdAndUpdate(id, updateData, { new: true });
     },
