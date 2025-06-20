@@ -2,16 +2,18 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 // import morgan from 'morgan';
 import { json, urlencoded } from 'body-parser';
-import { connectDB } from './database/dbConnection';  
-import routes from './routes'; 
-import dotenv from 'dotenv';
 import session from 'express-session';
+import { connectDB } from './database/dbConnection';  
+
+import dotenv from 'dotenv';
+dotenv.config();  
+
+import routes from './routes'; 
 // import passport from './config/passport';
 
 // helper to delete pending user after 30 days
 import './helpers/deletePendingUser'; 
 
-dotenv.config();  
 
 const app = express();
 
