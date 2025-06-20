@@ -36,6 +36,10 @@ const UserRepository = {
     // delete permanently
     deleteUser: async (id: string) => {
         return await User.findByIdAndDelete(id);
+    },
+
+    changePassword: async (id: string, newPassword: string) => {
+        return await User.findByIdAndUpdate(id, { password: newPassword });
     }
 }
 
