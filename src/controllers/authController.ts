@@ -3,7 +3,7 @@ import UserRepository from '../database/repository/userRepository';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { sendEmail } from '../services/emailService'; // Import hàm gửi email
+import { sendEmail } from '../services/emailService'; // import the sendEmail function
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
 
@@ -84,7 +84,7 @@ export const login = async (req: Request, res: Response) => {
             <a href="${url}">Verify Email</a>
             <p>This OTP will expire in 1 hour.</p>
         `
-        
+
         //   Send OTP via email
         await sendEmail({ toEmail: email, subject, htmlContent })
         return res.status(403).json({ message: 'A verification email has been sent to your email address. Please verify to complete registration.' });
@@ -146,4 +146,65 @@ export const verifyEmail = async (req: Request, res: Response) => {
     await user.save();
 
     res.json({ message: 'Email successfully verified. Your account is now active.' });
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const user = await UserRepository.findUserByEmail(email);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // create otp with 6 digits
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // save otp to database with 1h expiry time
+    user.otp = otp;
+    user.otpExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1h
+    await user.save();
+
+    // create url to reset password
+    const url = `${process.env.FRONTEND_URL}/reset-password/${user._id}`;
+    const subject = 'Reset Your Password';
+    const htmlContent = `
+        <h1>Reset Your Password</h1>
+        <h2> Your OTP is: ${otp}</h2>
+        <p>Please use this OPT to reset your password</p>
+        <a href="${url}">Reset Password</a>
+        <p>This OTP will expire in 1 hour.</p>
+    `;
+
+    // send email
+    await sendEmail({ toEmail: email, subject, htmlContent });
+
+    return res.status(200).json({ message: 'An email has been sent to your email address. Please check your email to reset your password.' });
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { otp, newPassword } = req.body;
+    const user = await UserRepository.findUserById(id);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // check if otp is valid and not expired
+    if (user.otp !== otp) {
+        return res.status(400).json({ message: 'Invalid OTP.' });
+    }
+
+    if (Date.now() > user.otpExpiry.getTime()) {
+        return res.status(400).json({ message: 'OTP has expired.' });
+    }
+
+    // update password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    await UserRepository.changePassword(id, hashedNewPassword);
+
+    // clear otp and otp expiry
+    user.otp = '';
+    user.otpExpiry = new Date(0);
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successfully.' });
 };
