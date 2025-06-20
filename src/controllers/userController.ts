@@ -25,6 +25,14 @@ const UserController = {
             return res.status(404).json({ message: 'User not found.' });
         }
 
+        // check if user update username and username is already taken
+        if (updateData.username && updateData.username !== user.username) {
+            const existingUser = await UserRepository.findUserByUsername(updateData.username);
+            if (existingUser) {
+                return res.status(400).json({ message: 'Username is already taken.' });
+            }
+        }
+
         // remove password from updateData if it exists
         delete updateData.password;
 
