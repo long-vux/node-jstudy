@@ -38,6 +38,14 @@ export const login = async (req: Request, res: Response) => {
     // Find user by email
     const user = await UserRepository.findUserByEmail(email);
 
+    // check if user is banned or pending-deletion
+    if (user?.status === "banned") {
+        return res.status(401).json({ message: 'Your account is banned. Please contact admin.' });
+    }
+    if (user?.status === "pending_deletion") {
+        return res.status(401).json({ message: 'Your account is pending deletion. You can recover your account within 30 days to continue using the platform.' });
+    }
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return res.status(401).json({ message: 'Invalid email or password.' });
     }
@@ -46,7 +54,7 @@ export const login = async (req: Request, res: Response) => {
     const token = jwt.sign(
         { id: user._id, role: user.role },
         JWT_SECRET,
-        { expiresIn: '1h' }
+        { expiresIn: '10h' }
     );
 
     return res.status(200).json({ message: "User login successfully", token, user });
