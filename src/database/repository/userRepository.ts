@@ -5,6 +5,10 @@ const UserRepository = {
         return await User.findOne({ email });
     },
 
+    findUserByUsername: async (username: string) => {
+        return await User.findOne({ username });
+    },
+
     findUserById: async (id: string) => {
         return await User.findById(id);
     },

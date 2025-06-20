@@ -15,8 +15,11 @@ interface IUser extends Document {
     totalPoints: number;
     solvedExercises: number;
   };
-  status: 'active' | 'banned' | 'pending_deletion' | 'deleted';
+  status: 'pending-active' | 'active' | 'banned' | 'pending_deletion' | 'deleted';
   joinedAt: Date;
+  verificationCode: string;
+  isVerified: Boolean;
+
 }
 
 const userSchema = new Schema<IUser>({
@@ -31,15 +34,18 @@ const userSchema = new Schema<IUser>({
   },
   status: {
     type: String,
-    enum: ['active', 'banned', 'pending_deletion', 'deleted'],
+    enum: ['pending-active', 'active', 'banned', 'pending_deletion', 'deleted'],
     default: 'active'
   },
-  deletionRequestedAt: { type: Date }, // Thêm dòng này
+  deletionRequestedAt: { type: Date }, 
   stats: {
     totalPoints: { type: Number, default: 0 },
     solvedExercises: { type: Number, default: 0 }
   },
-  joinedAt: { type: Date, default: Date.now }
+  joinedAt: { type: Date, default: Date.now },
+  verificationCode: { type: String, default: null }, 
+  isVerified: { type: Boolean, default: false }, 
+
 }, { timestamps: true });
 
 // Hàm tính toán thời gian tham gia và hiển thị theo định dạng "Tháng 7, 2021"
