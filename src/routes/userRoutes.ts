@@ -12,6 +12,6 @@ router.delete('/delete-me/:id', checkUser, catchAsync(UserController.userDeleteT
 // Only admin can get all users
 router.get('/', checkUser, checkAdmin, catchAsync(UserController.getUsers));
 router.patch('/ban/:id', checkUser, checkAdmin, catchAsync(UserController.banUser));
-
+router.patch('/unban/:id', checkUser, checkAdmin, catchAsync(UserController.unbanUser));
 
 export default router;

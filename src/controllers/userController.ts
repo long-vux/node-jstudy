@@ -48,6 +48,21 @@ const UserController = {
         }
         await UserRepository.updateUser(id, { status: 'banned' });
         return res.status(200).json({ message: 'User banned successfully.' });
+    },
+
+    unbanUser: async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const user = await UserRepository.findUserById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // check if user is already active
+        if (user.status === 'active') {
+            return res.status(400).json({ message: 'User is already active, no need to unban.' });
+        }
+        await UserRepository.updateUser(id, { status: 'active' });
+        return res.status(200).json({ message: 'User unbanned successfully.' });
     }
 };
 
