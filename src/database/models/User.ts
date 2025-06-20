@@ -19,6 +19,8 @@ interface IUser extends Document {
   joinedAt: Date;
   verificationCode: string;
   isVerified: Boolean;
+  otp: string;
+  otpExpiry: Date;
 
 }
 
@@ -43,8 +45,14 @@ const userSchema = new Schema<IUser>({
     solvedExercises: { type: Number, default: 0 }
   },
   joinedAt: { type: Date, default: Date.now },
+
+  // for email verification
   verificationCode: { type: String, default: null }, 
   isVerified: { type: Boolean, default: false }, 
+
+  // for OTP verification (password reset)
+  otp: { type: String, default: null }, 
+  otpExpiry: { type: Date, default: null },
 
 }, { timestamps: true });
 
