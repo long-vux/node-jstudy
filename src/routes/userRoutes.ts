@@ -7,7 +7,7 @@ const router = Router();
 
 router.put('/update/:id', checkUser, catchAsync(UserController.updateUser));
 router.get('/:id', checkUser, catchAsync(UserController.getUserById));
-router.delete('/delete-me/:id', checkUser, catchAsync(UserController.userDeleteThemselves));
+router.delete('/delete-me', checkUser, catchAsync(UserController.userDeleteThemselves));
 
 // Only admin can get all users
 router.get('/', checkUser, checkAdmin, catchAsync(UserController.getUsers));
