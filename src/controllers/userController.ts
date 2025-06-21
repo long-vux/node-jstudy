@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import UserRepository from '../database/repository/userRepository';
-import { uploadToS3, deleteFromS3 } from '../utils/s3Upload';
+import { uploadToS3, getFromS3, deleteFromS3 } from '../utils/s3Upload';
 
 const UserController = {
     getUserById: async (req: Request, res: Response) => {
@@ -9,7 +9,23 @@ const UserController = {
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }
-        return res.status(200).json({ user });
+
+        // if user has an avatar, get the url from S3
+        let avatarUrl = null;
+        if (user.profile.avatar) {
+            avatarUrl = await getFromS3(user.profile.avatar);
+        }
+
+        // return user object with avatarUrl
+        return res.status(200).json({
+            user: {
+                ...user.toObject(),
+                profile: {
+                    ...user.profile,
+                    avatar: avatarUrl
+                }
+            }
+        });
     },
 
     getUsers: async (req: Request, res: Response) => {

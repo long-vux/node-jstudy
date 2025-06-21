@@ -42,10 +42,13 @@ const uploadToS3 = async ({ fileBuffer, fileName, mimeType }: S3UploadParams): P
  * @returns {Promise<string>} - The URL of the file.
  */
 const getFromS3 = async (fileName: string): Promise<string> => {
+  const fileKey = fileName.split('amazonaws.com/')[1];  // split key after amazonaws.com/
+  
   const params = {
     Bucket: process.env.BUCKET_NAME!,
-    Key: fileName,
+    Key: fileKey,
   };
+
   const command = new GetObjectCommand(params);
   const url = await getSignedUrl(S3Client, command, { expiresIn: 5 * 60 * 60 }); // Expiry in seconds
   return url;
