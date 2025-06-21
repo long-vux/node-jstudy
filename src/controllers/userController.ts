@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import UserRepository from '../database/repository/userRepository';
+import { uploadToS3, deleteFromS3 } from '../utils/s3Upload';
 
 const UserController = {
     getUserById: async (req: Request, res: Response) => {
@@ -71,6 +72,43 @@ const UserController = {
         }
         await UserRepository.updateUser(id, { status: 'active' });
         return res.status(200).json({ message: 'User unbanned successfully.' });
+    },
+
+    uploadAvatar: async (req: Request, res: Response) => {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        // get file buffer and file name
+        const fileBuffer = req.file.buffer;
+        const fileName = `${Date.now()}-${req.file.originalname}`;
+        const mimeType = req.file.mimetype;
+
+        // Upload the new avatar to S3
+        const fileUrl = await uploadToS3({
+            fileBuffer,
+            fileName: `avatar/${fileName}`,
+            mimeType,
+        });
+
+        // Check if user has an existing avatar, if so, delete it
+        const user = await UserRepository.findUserById(req.user?.id!);
+        if (user && user.profile.avatar) {
+            const existingImageUrl = user.profile.avatar;
+            const existingImageName = existingImageUrl.split('/').pop();
+
+            // Delete the old avatar from S3
+            await deleteFromS3({ fileName: `avatar/${existingImageName}` });
+
+            // Clear the existing avatar URL in the database
+            await UserRepository.updateUser(req.user?.id!, { 'profile.avatar': null });
+        }
+
+        // Save the new image URL to the database
+        await UserRepository.updateUserProfileImage(req.user?.id!, fileUrl);
+
+        // Return success response
+        res.status(200).json({ message: 'Profile image uploaded successfully', imageUrl: fileUrl });
     }
 };
 

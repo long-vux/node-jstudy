@@ -13,8 +13,6 @@ interface S3DeleteParams {
   fileName: string;
 }
 
-const s3Client = new S3Client(); // Declare S3 client
-
 /**
  * Uploads a file buffer to AWS S3.
  * @param {Buffer} fileBuffer - The file buffer.
@@ -28,10 +26,11 @@ const uploadToS3 = async ({ fileBuffer, fileName, mimeType }: S3UploadParams): P
     Key: fileName,
     Body: fileBuffer,
     ContentType: mimeType,
+    // ACL: ObjectCannedACL.public_read,
   };
 
   const command = new PutObjectCommand(params);
-  await s3Client.send(command);
+  await S3Client.send(command);
 
   return `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${fileName}`;
 };
@@ -48,7 +47,7 @@ const getFromS3 = async (fileName: string): Promise<string> => {
     Key: fileName,
   };
   const command = new GetObjectCommand(params);
-  const url = await getSignedUrl(s3Client, command, { expiresIn: 5 * 60 * 60 }); // Expiry in seconds
+  const url = await getSignedUrl(S3Client, command, { expiresIn: 5 * 60 * 60 }); // Expiry in seconds
   return url;
 };
 
@@ -63,7 +62,7 @@ const deleteFromS3 = async ({ fileName }: S3DeleteParams): Promise<boolean> => {
     Key: fileName,
   };
   const command = new DeleteObjectCommand(params);
-  await s3Client.send(command);
+  await S3Client.send(command);
   return true;
 };
 

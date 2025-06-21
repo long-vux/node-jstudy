@@ -44,7 +44,16 @@ const UserRepository = {
 
     changePassword: async (id: string, newPassword: string) => {
         return await User.findByIdAndUpdate(id, { password: newPassword });
+    },
+
+    updateUserProfileImage: async (id: string, imageUrl: string) => {
+        return await User.findByIdAndUpdate(
+            id,
+            { 'profile.avatar': imageUrl }
+        );
+
     }
+
 }
 
 export default UserRepository;
